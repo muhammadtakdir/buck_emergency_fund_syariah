@@ -1,26 +1,12 @@
 module buck_emergency_fund::bucket_mock {
     use sui::coin::{Self, Coin, TreasuryCap};
-    use sui::balance::{Self, Balance};
-    use sui::sui::SUI;
 
-    /// The BUCKET_MOCK witness (Matches module name for OTW)
+    /// OTW for BUCK
     public struct BUCKET_MOCK has drop {}
 
-    /// The SUSDB (Staked USDB/BUCK) witness
-    public struct SUSDB has drop {}
-
-    /// Shared Treasury for Mock Minting
     public struct BuckTreasury has key {
         id: UID,
         cap: TreasuryCap<BUCKET_MOCK>,
-    }
-
-    /// Saving Pool Mock
-    public struct SavingPool has key {
-        id: UID,
-        buck_vault: Balance<BUCKET_MOCK>,
-        sui_reward_vault: Balance<SUI>,
-        susdb_supply: TreasuryCap<SUSDB>,
     }
 
     #[allow(deprecated_usage)]
@@ -30,10 +16,44 @@ module buck_emergency_fund::bucket_mock {
         transfer::share_object(BuckTreasury { id: object::new(ctx), cap: treasury });
     }
 
-    /// Initialize the saving pool with sUSDB
+    public fun mint_mock(treasury: &mut BuckTreasury, amount: u64, ctx: &mut TxContext): Coin<BUCKET_MOCK> {
+        coin::mint(&mut treasury.cap, amount, ctx)
+    }
+
+    public struct Bottle has store, key {
+        id: UID,
+        collateral_amount: u64,
+        buck_amount: u64,
+    }
+
+    public fun is_legit_bottle(_bottle: &Bottle): bool {
+        true
+    }
+
+    public fun create_mock_bottle(collateral_amount: u64, buck_amount: u64, ctx: &mut TxContext): Bottle {
+        Bottle { id: object::new(ctx), collateral_amount, buck_amount }
+    }
+}
+
+module buck_emergency_fund::saving_pool_mock {
+    use sui::coin::{Self, Coin, TreasuryCap};
+    use sui::balance::{Self, Balance};
+    use sui::sui::SUI;
+    use buck_emergency_fund::bucket_mock::BUCKET_MOCK;
+
+    /// OTW for sUSDB
+    public struct SAVING_POOL_MOCK has drop {}
+
+    public struct SavingPool has key {
+        id: UID,
+        buck_vault: Balance<BUCKET_MOCK>,
+        sui_reward_vault: Balance<SUI>,
+        susdb_supply: TreasuryCap<SAVING_POOL_MOCK>,
+    }
+
     #[allow(deprecated_usage)]
-    public fun create_saving_pool(susdb_witness: SUSDB, ctx: &mut TxContext) {
-        let (s_treasury, s_metadata) = coin::create_currency(susdb_witness, 9, b"sUSDB", b"Staked USDB", b"Bucket Saving Receipt", option::none(), ctx);
+    fun init(witness: SAVING_POOL_MOCK, ctx: &mut TxContext) {
+        let (s_treasury, s_metadata) = coin::create_currency(witness, 9, b"sUSDB", b"Staked USDB", b"Bucket Saving Receipt", option::none(), ctx);
         transfer::public_freeze_object(s_metadata);
 
         let pool = SavingPool {
@@ -45,25 +65,15 @@ module buck_emergency_fund::bucket_mock {
         transfer::share_object(pool);
     }
 
-    public fun stake(pool: &mut SavingPool, buck: Coin<BUCKET_MOCK>, ctx: &mut TxContext): Coin<SUSDB> {
+    public fun stake(pool: &mut SavingPool, buck: Coin<BUCKET_MOCK>, ctx: &mut TxContext): Coin<SAVING_POOL_MOCK> {
         let amount = coin::value(&buck);
         balance::join(&mut pool.buck_vault, coin::into_balance(buck));
         coin::mint(&mut pool.susdb_supply, amount, ctx)
     }
 
-    public fun unstake(pool: &mut SavingPool, susdb: Coin<SUSDB>, ctx: &mut TxContext): Coin<BUCKET_MOCK> {
+    public fun unstake(pool: &mut SavingPool, susdb: Coin<SAVING_POOL_MOCK>, ctx: &mut TxContext): Coin<BUCKET_MOCK> {
         let amount = coin::value(&susdb);
         coin::burn(&mut pool.susdb_supply, susdb);
         coin::take(&mut pool.buck_vault, amount, ctx)
-    }
-
-    public struct Bottle has store, key { id: UID, collateral_amount: u64, buck_amount: u64, stake_amount: u64, reward_coll_snapshot: u128, reward_debt_snapshot: u128 }
-    public fun get_bottle_info(bottle: &Bottle): (u64, u64) { (bottle.collateral_amount, bottle.buck_amount) }
-    public fun is_legit_bottle(_bottle: &Bottle): bool { true }
-    public fun create_mock_bottle(collateral_amount: u64, buck_amount: u64, ctx: &mut TxContext): Bottle {
-        Bottle { id: object::new(ctx), collateral_amount, buck_amount, stake_amount: 0, reward_coll_snapshot: 0, reward_debt_snapshot: 0 }
-    }
-    public fun mint_mock(treasury: &mut BuckTreasury, amount: u64, ctx: &mut TxContext): Coin<BUCKET_MOCK> {
-        coin::mint(&mut treasury.cap, amount, ctx)
     }
 }

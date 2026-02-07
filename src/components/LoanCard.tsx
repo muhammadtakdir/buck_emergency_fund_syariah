@@ -2,7 +2,7 @@
 
 import { useCurrentAccount, useSuiClientQuery, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { PACKAGE_ID, MODULE_EMERGENCY_FUND, LENDING_POOL_ID } from '@/lib/sui-client';
+import { PACKAGE_ID, MODULE_EMERGENCY_FUND, LENDING_POOL_ID, SAVING_POOL_ID } from '@/lib/sui-client';
 
 export function LoanCard() {
 	const account = useCurrentAccount();
@@ -37,17 +37,15 @@ export function LoanCard() {
 
 	const handleRepayWithSui = async (vaultId: string) => {
 		const tx = new Transaction();
-		
-		// For demo, we pay with a small portion of SUI to clear debt
-		// In a real app, calculate exact SUI needed based on current price
 		const mockScore = tx.moveCall({ target: `${PACKAGE_ID}::credit_score::create_credit_score`, arguments: [] });
 
 		tx.moveCall({
 			target: `${PACKAGE_ID}::${MODULE_EMERGENCY_FUND}::repay_with_jaminan`,
 			arguments: [
 				tx.object(LENDING_POOL_ID),
+				tx.object(SAVING_POOL_ID),
 				tx.object(vaultId),
-				tx.pure.u64(0.1 * 1_000_000_000), // Repay using 0.1 SUI
+				tx.pure.u64(0.1 * 1_000_000_000), // Repay using 0.1 SUI for demo
 				mockScore,
 				tx.object('0x6'),
 			],
