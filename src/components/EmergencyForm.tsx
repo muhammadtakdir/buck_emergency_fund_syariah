@@ -140,7 +140,7 @@ export function EmergencyForm() {
 
 				<div className="p-4 bg-slate-50 rounded-2xl space-y-2 text-[11px] border border-slate-100">
 					<div className="flex justify-between">
-						<span className="text-slate-500">Ujrah (10% Service Fee)</span>
+						<span className="text-slate-500">Ujrah (Service Fee)</span>
 						<span className="font-bold text-slate-900">+{feeAmount.toFixed(2)} BUCK</span>
 					</div>
 					<div className="pt-2 border-t border-slate-200 flex justify-between text-sm">

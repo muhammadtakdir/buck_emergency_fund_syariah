@@ -53,7 +53,7 @@ export function MusharakahPool() {
 		<div className="p-6 bg-white rounded-[2rem] shadow-sm border border-slate-100 flex flex-col h-full">
 			<div className="flex justify-between items-start mb-6">
 				<div>
-					<h3 className="text-lg font-black text-slate-900 tracking-tight">Musharakah Pool</h3>
+					<h3 className="text-lg font-black text-slate-900 tracking-tight">Musharakah Pool (Partnership)</h3>
 					<p className="text-sm text-slate-500 font-medium">Halal partnership & profit sharing</p>
 				</div>
 				<div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase tracking-widest animate-pulse">

@@ -100,7 +100,7 @@ export default function Dashboard() {
 							onClick={() => setActiveTab('lend')}
 							className={`flex-1 sm:flex-none px-8 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'lend' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/10' : 'text-slate-500 hover:text-slate-700'}`}
 						>
-							Lender (Musharakah)
+							Lender (Partnership)
 						</button>
 					</div>
 
@@ -144,10 +144,10 @@ export default function Dashboard() {
 							<LoanCard />
 							
 							<div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm group">
-								<p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Total System Waqf</p>
+								<p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Total System Waqf (Endowment)</p>
 								<div className="flex items-end gap-2">
 									<span className="text-3xl font-black text-slate-900 transition-colors group-hover:text-emerald-600">{waqfAmount.toFixed(2)}</span>
-									<span className="text-sm font-bold text-slate-300 mb-1">LP BUCK</span>
+									<span className="text-xs font-bold text-slate-300 mb-1">LP BUCK Units</span>
 								</div>
 								<p className="text-[10px] text-emerald-500 mt-2 font-bold italic">Community endowment, protocol managed.</p>
 							</div>
