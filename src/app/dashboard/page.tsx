@@ -36,9 +36,12 @@ export default function Dashboard() {
 	
 	const maxBuckPotential = (totalSui * 0.70) / 1.5;
 
-	// Extract Pool fields (Available BUCK, Waqf, and Total SUI Locked)
+	// FIX: Correct available liquidity math (Reserve + Staked)
 	const poolFields = (poolObject?.data?.content as any)?.fields;
-	const availableLiquidity = poolFields ? Number(poolFields.buck_balance) / 1_000_000_000 : 0;
+	const availableLiquidity = poolFields 
+		? (Number(poolFields.buck_reserve) + Number(poolFields.susdb_balance)) / 1_000_000_000 
+		: 0;
+	
 	const waqfAmount = poolFields ? Number(poolFields.waqf_reserve) / 1_000_000_000 : 0;
 	const protocolTotalSuiLocked = poolFields ? Number(poolFields.total_sui_locked) / 1_000_000_000 : 0;
 
