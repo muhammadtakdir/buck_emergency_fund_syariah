@@ -25,11 +25,19 @@ module buck_emergency_fund::emergency_fund {
     /// Main Lending Pool
     public struct LendingPool has key {
         id: UID,
+        
+        // Liquidity
         buck_balance: Balance<BUCK>,      
         lp_buck_supply: TreasuryCap<EMERGENCY_FUND>,
+        
+        // Reserves
         maintenance_balance: Balance<BUCK>, 
         waqf_reserve: Balance<EMERGENCY_FUND>,     
 
+        // Global Stats
+        total_sui_locked: u64,
+
+        // Configuration
         service_fee_bps: u64,            
         min_collateral_ratio: u64,       
         split_maintenance_bps: u64,      
@@ -79,6 +87,7 @@ module buck_emergency_fund::emergency_fund {
             lp_buck_supply: treasury,
             maintenance_balance: balance::zero(),
             waqf_reserve: balance::zero(), 
+            total_sui_locked: 0,
             
             service_fee_bps: 1000,         
             min_collateral_ratio: 150,
@@ -105,16 +114,19 @@ module buck_emergency_fund::emergency_fund {
     }
 
     public fun deposit_collateral(
+        pool: &mut LendingPool,
         vault: &mut UserVault,
         collateral: Coin<SUI>
     ) {
+        let amount = coin::value(&collateral);
+        pool.total_sui_locked = pool.total_sui_locked + amount;
         balance::join(&mut vault.collateral_balance, coin::into_balance(collateral));
     }
 
     public fun withdraw_collateral(
+        pool: &mut LendingPool,
         vault: &mut UserVault,
         amount: u64,
-        pool: &LendingPool,
         ctx: &mut TxContext
     ): Coin<SUI> {
         assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
@@ -131,6 +143,7 @@ module buck_emergency_fund::emergency_fund {
             assert!(collateral_val_buck >= required_collateral, E_INSUFFICIENT_COLLATERAL);
         };
 
+        pool.total_sui_locked = pool.total_sui_locked - amount;
         coin::from_balance(balance::split(&mut vault.collateral_balance, amount), ctx)
     }
 
@@ -175,7 +188,6 @@ module buck_emergency_fund::emergency_fund {
         _clock: &Clock,
         ctx: &mut TxContext
     ): Coin<BUCK> {
-        // SECURITY FIX: Assert sender is vault owner
         assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
         assert!(bucket_mock::check_cdp_owner(cdp, tx_context::sender(ctx)), E_NOT_OWNER);
         assert!(amount_to_borrow > 0, E_ZERO_AMOUNT);

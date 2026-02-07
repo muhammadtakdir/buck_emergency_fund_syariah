@@ -22,11 +22,11 @@ To protect both lenders and the protocol, the system uses a **conservative safet
 - **Independence:** The risk engine self-regulates to prevent mass liquidations and ensure the Waqf remains solvent.
 
 ## 🚀 Deployment Info (Sui Testnet)
-The protocol is live on the Sui Testnet. (Updated after Security Audit Feb 2026)
+The protocol is live on the Sui Testnet. (Latest Tracking Version: Feb 2026)
 
-- **Package ID:** `0xdb96eb578167df475639a4392d8db1e46afe114bc38ad0cf8f9c653c457ec929`
-- **Lending Pool (Shared):** `0x4e7f127994d3435c54849a5d10ba19cfda12dd348b2d01daced8721d51ebefd5`
-- **Buck Treasury (Mock Faucet):** `0x5a48236911525857cb6c393fb53013b4869ab988e7edeca4064e70423d123431`
+- **Package ID:** `0xdf6fb812b9da547b5fb6eca5ccd564c8a57ba813beb786d480158390c55aae6f`
+- **Lending Pool (Shared):** `0x29a6e48a78fd96fff39773bf3d3e0b31941ac67ccc79cb41bb550e4f173b14ef`
+- **Buck Treasury (Mock Faucet):** `0xc51c9614d5fdea10f6086b991eacf2874f9da79ed838f7560fa1c61cf9c6de65`
 
 ---
 

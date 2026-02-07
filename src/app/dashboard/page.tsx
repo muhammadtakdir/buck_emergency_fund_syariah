@@ -25,7 +25,7 @@ export default function Dashboard() {
 		coinType: BUCK_COIN_TYPE
 	}, { enabled: !!account });
 
-	// Fetch Lending Pool Shared Object Data (For Waqf)
+	// Fetch Lending Pool Shared Object Data
 	const { data: poolObject } = useSuiClientQuery('getObject', {
 		id: LENDING_POOL_ID,
 		options: { showContent: true }
@@ -36,9 +36,11 @@ export default function Dashboard() {
 	
 	const maxBuckPotential = (totalSui * 0.70) / 1.5;
 
-	// Extract Waqf from pool fields
+	// Extract Pool fields (Available BUCK, Waqf, and Total SUI Locked)
 	const poolFields = (poolObject?.data?.content as any)?.fields;
+	const availableLiquidity = poolFields ? Number(poolFields.buck_balance) / 1_000_000_000 : 0;
 	const waqfAmount = poolFields ? Number(poolFields.waqf_reserve) / 1_000_000_000 : 0;
+	const protocolTotalSuiLocked = poolFields ? Number(poolFields.total_sui_locked) / 1_000_000_000 : 0;
 
 	return (
 		<main className="min-h-screen p-4 md:p-8 bg-[#f8fafc]">
@@ -49,7 +51,7 @@ export default function Dashboard() {
 						<div className="flex items-center gap-3 mb-1">
 							<h1 className="text-3xl font-black text-slate-900 tracking-tight">BUCK</h1>
 							<div className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-black rounded-lg uppercase tracking-widest">
-								Independent Sharia
+								Independent Sharia (Ethical)
 							</div>
 						</div>
 						<p className="text-slate-500 font-medium text-sm">Decentralized Riba-Free Liquidity Protocol</p>
@@ -81,13 +83,13 @@ export default function Dashboard() {
 							<p className="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Available BUCK</p>
 							<p className="text-2xl font-black text-slate-900">{totalBuck.toFixed(2)} <span className="text-sm font-bold text-slate-200">BUCK</span></p>
 						</div>
-						<div className="p-6 bg-blue-600 rounded-3xl shadow-xl shadow-blue-900/10 text-white">
-							<p className="text-[10px] text-blue-200 font-black uppercase mb-1 tracking-widest text-opacity-80">Borrow Limit</p>
+						<div className="p-6 bg-blue-600 rounded-3xl shadow-xl shadow-blue-900/10 text-white group">
+							<p className="text-[10px] text-blue-200 font-black uppercase mb-1 tracking-widest text-opacity-80 group-hover:text-white transition-colors">Max Borrow Potential</p>
 							<p className="text-2xl font-black">{maxBuckPotential.toFixed(2)} <span className="text-sm font-bold text-blue-200">BUCK</span></p>
 						</div>
 						<div className="p-6 bg-slate-900 rounded-3xl shadow-xl shadow-slate-900/10 text-white">
-							<p className="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">System Status</p>
-							<p className="text-2xl font-black text-emerald-400 tracking-tight">Independent</p>
+							<p className="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Protocol Capacity</p>
+							<p className="text-2xl font-black text-emerald-400 tracking-tight">{availableLiquidity.toLocaleString()} <span className="text-sm font-bold text-slate-500">BUCK</span></p>
 						</div>
 					</div>
 
@@ -115,9 +117,9 @@ export default function Dashboard() {
 									<div className="space-y-8">
 										<CreditScore />
 										<div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
-											<h4 className="font-bold text-slate-900 mb-2">Protocol Independence</h4>
-											<p className="text-xs text-slate-500 leading-relaxed">
-												This system operates autonomously. Developers hold a <code className="bg-slate-100 px-1 rounded text-blue-600 font-bold">MaintenanceCap</code> that allows <strong>only</strong> the withdrawal of service fees (20%). Developers cannot touch your collateral or modify the core logic.
+											<h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wider">Independence Note</h4>
+											<p className="text-xs text-slate-500 leading-relaxed italic">
+												The protocol is autonomous. Developers hold only a <strong>MaintenanceCap</strong> to withdraw the designated 20% service fee. Your SUI collateral is protected by immutable smart contract logic.
 											</p>
 										</div>
 									</div>
@@ -146,13 +148,25 @@ export default function Dashboard() {
 							<h2 className="text-xl font-bold text-slate-900 tracking-tight">Active Records</h2>
 							<LoanCard />
 							
-							<div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm group">
-								<p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Total System Waqf (Endowment)</p>
-								<div className="flex items-end gap-2">
-									<span className="text-3xl font-black text-slate-900 transition-colors group-hover:text-emerald-600">{waqfAmount.toFixed(2)}</span>
-									<span className="text-xs font-bold text-slate-300 mb-1">LP BUCK Units</span>
+							{/* Stats Sidebar */}
+							<div className="space-y-4">
+								<div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm group">
+									<p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Total System Waqf (Endowment)</p>
+									<div className="flex items-end gap-2">
+										<span className="text-3xl font-black text-slate-900 transition-colors group-hover:text-emerald-600">{waqfAmount.toFixed(2)}</span>
+										<span className="text-xs font-bold text-slate-300 mb-1">LP BUCK Units</span>
+									</div>
+									<p className="text-[10px] text-emerald-500 mt-2 font-bold italic">Community endowment, protocol managed.</p>
 								</div>
-								<p className="text-[10px] text-emerald-500 mt-2 font-bold italic">Community endowment, protocol managed.</p>
+
+								<div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm group">
+									<p className="text-[10px] text-slate-400 font-bold uppercase mb-2 tracking-widest">Total SUI Locked (Collateral)</p>
+									<div className="flex items-end gap-2">
+										<span className="text-3xl font-black text-slate-900 transition-colors group-hover:text-blue-600">{protocolTotalSuiLocked.toFixed(3)}</span>
+										<span className="text-xs font-bold text-slate-300 mb-1">SUI</span>
+									</div>
+									<p className="text-[10px] text-blue-500 mt-2 font-bold italic">Safe community-backed collateral.</p>
+								</div>
 							</div>
 						</aside>
 					</div>
