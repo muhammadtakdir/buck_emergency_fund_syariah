@@ -5,11 +5,11 @@ export const SUI_RPC_URL = getJsonRpcFullnodeUrl(SUI_NETWORK);
 
 export const suiClient = new SuiJsonRpcClient({ url: SUI_RPC_URL, network: SUI_NETWORK });
 
-// Final Deployment Constants (Updated with total_sui_locked stat)
-export const PACKAGE_ID = '0xdf6fb812b9da547b5fb6eca5ccd564c8a57ba813beb786d480158390c55aae6f';
-export const LENDING_POOL_ID = '0x29a6e48a78fd96fff39773bf3d3e0b31941ac67ccc79cb41bb550e4f173b14ef';
-export const BUCK_TREASURY_ID = '0xc51c9614d5fdea10f6086b991eacf2874f9da79ed838f7560fa1c61cf9c6de65';
-export const MAINTENANCE_CAP_ID = '0xaf82037e80cd9d266d3dda8cc11af06ba42f4d07a059cc591e5d0add20d5c625';
+// FINAL VERSION (Includes Duration, Repay-with-SUI, and TVL Stats)
+export const PACKAGE_ID = '0xd73c1e7d96e8a887f45f1765e2c1a65ae7fcba594b707084b2a60d7d281f2282';
+export const LENDING_POOL_ID = '0xe1f0ff0e05c9846bb82f2e4034f6dbb69520316938ce7972e77da94d1aeab333';
+export const BUCK_TREASURY_ID = '0x9be89704a521764e9d30f21b1fa8382fbd6a5fe8dee62c879378a7f8b50a0bfc';
+export const MAINTENANCE_CAP_ID = '0xc0ef29f3461fb9acd26e0ce6413408d9e015935bc0c399b89660458403b32e98';
 
 // Coin Types
 export const BUCK_COIN_TYPE = `${PACKAGE_ID}::bucket_mock::BUCKET_MOCK`;
