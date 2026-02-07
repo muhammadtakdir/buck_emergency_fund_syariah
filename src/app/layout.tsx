@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BUCK Emergency Fund",
-  description: "Instant liquidity from your CDP without closing your position",
+  description: "Instant BUCK liquidity for CDP holders on Sui (Sharia-Compliant)",
+  icons: {
+    icon: "/befs_logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -43,14 +43,17 @@ export default function Dashboard() {
 	return (
 		<main className="min-h-screen p-4 md:p-8 bg-[#f8fafc]">
 			<header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
-				<div>
-					<div className="flex items-center gap-3 mb-1">
-						<h1 className="text-3xl font-black text-slate-900 tracking-tight">BUCK</h1>
-						<div className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-black rounded-lg uppercase tracking-widest">
-							Independent Sharia
+				<div className="flex items-center gap-4">
+					<img src="/befs_logo.png" alt="Logo" className="w-12 h-12 rounded-xl border border-slate-200" />
+					<div>
+						<div className="flex items-center gap-3 mb-1">
+							<h1 className="text-3xl font-black text-slate-900 tracking-tight">BUCK</h1>
+							<div className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-black rounded-lg uppercase tracking-widest">
+								Independent Sharia
+							</div>
 						</div>
+						<p className="text-slate-500 font-medium text-sm">Decentralized Riba-Free Liquidity Protocol</p>
 					</div>
-					<p className="text-slate-500 font-medium text-sm">Decentralized Riba-Free Liquidity Protocol</p>
 				</div>
 				<ConnectButton />
 			</header>

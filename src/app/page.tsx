@@ -8,6 +8,9 @@ export default function Home() {
 			<div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
 			<div className="max-w-4xl text-center space-y-8 relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+				<div className="flex justify-center mb-4">
+					<img src="/befs_logo.png" alt="BEFS Logo" className="w-24 h-24 rounded-2xl shadow-2xl shadow-emerald-500/20 border border-white/10" />
+				</div>
 				<div className="inline-block px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm font-medium mb-4">
 					🌙 Sharia-Compliant DeFi on Sui
 				</div>
