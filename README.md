@@ -1,12 +1,12 @@
 # 🚨 BUCK Emergency Fund (Sharia-Compliant DeFi)
-**Instant BUCK liquidity for CDP holders, powered by a decentralized Waqf & Ujrah system on Sui.**
+**Instant BUCK liquidity for Bottle holders, powered by a decentralized Waqf & Ujrah system on Sui.**
 
 ---
 
 ## 📖 Overview
-**BUCK Emergency Fund** is a decentralized, Sharia-compliant lending protocol on the Sui blockchain. It provides instant **BUCK** liquidity to users who lock **SUI** as collateral. 
+**BUCK Emergency Fund** is a decentralized, Sharia-compliant lending protocol on the Sui blockchain. It provides instant **BUCK** (also known as USDB) liquidity to users who lock **SUI** as collateral. 
 
-Designed with ethical finance in mind, the protocol replaces traditional interest (Riba) with a sustainable model of **Service Fees (Ujrah)** and a **System-Owned Endowment (Waqf)**. This ensures the protocol grows more independent over time, eventually aiming to fund its own community-driven lending pool.
+Designed with ethical finance in mind, the protocol replaces traditional interest (Riba) with a sustainable model of **Service Fees (Ujrah)** and a **System-Owned Endowment (Waqf)**. The system provides real-time transparency with live tracking of **Total SUI Locked (TVL)** and system-wide liquidity.
 
 ## 🌙 Sharia-Compliant Economic Model
 The system operates on three ethical pillars:
@@ -19,6 +19,7 @@ The system operates on three ethical pillars:
 To protect both lenders and the protocol, the system uses a **conservative safety floor**:
 - **SUI Valuation:** Collateral is valued at a predicted low of **$0.70 BUCK** (even if the current price is higher).
 - **Over-Collateralization:** A minimum **150%** collateral ratio is enforced based on this safe floor.
+- **Bucket Integration:** Direct integration with Bucket Protocol **Bottles** (CDPs) ensures verified collateral health.
 - **Independence:** The risk engine self-regulates to prevent mass liquidations and ensure the Waqf remains solvent.
 
 ## 🚀 Deployment Info (Sui Testnet)
@@ -53,7 +54,6 @@ The protocol is live on the Sui Testnet. (Latest Tracking Version: Feb 2026)
 
 2. **Setup Frontend:**
    ```bash
-   cd frontend
    npm install
    npm run dev
    ```
@@ -70,7 +70,7 @@ The protocol is live on the Sui Testnet. (Latest Tracking Version: Feb 2026)
 2. **Borrowers:** 
    - Create a `UserVault`.
    - Deposit `SUI` as collateral.
-   - Borrow `BUCK` (Fee is added upfront).
+   - Borrow `BUCK` (Ujrah is added upfront).
    - Repay in installments or full to reclaim `SUI`.
 
 ---

@@ -4,7 +4,7 @@ module buck_emergency_fund::emergency_fund {
     use sui::sui::SUI;
     use sui::clock::Clock;
     use sui::event;
-    use buck_emergency_fund::bucket_mock::{Self, BUCKET_MOCK as BUCK, CDP};
+    use buck_emergency_fund::bucket_mock::{Self, BUCKET_MOCK as BUCK, Bottle};
     use buck_emergency_fund::credit_score::{Self, CreditScore};
     use buck_emergency_fund::price_feed_mock;
 
@@ -182,14 +182,14 @@ module buck_emergency_fund::emergency_fund {
     public fun borrow(
         pool: &mut LendingPool,
         vault: &mut UserVault,
-        cdp: &CDP,
+        bottle: &Bottle, // Use real Bottle from Bucket Protocol
         amount_to_borrow: u64,
         score: &mut CreditScore,
         _clock: &Clock,
         ctx: &mut TxContext
     ): Coin<BUCK> {
         assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
-        assert!(bucket_mock::check_cdp_owner(cdp, tx_context::sender(ctx)), E_NOT_OWNER);
+        assert!(bucket_mock::is_legit_bottle(bottle), E_NOT_OWNER);
         assert!(amount_to_borrow > 0, E_ZERO_AMOUNT);
         assert!(balance::value(&pool.buck_balance) >= amount_to_borrow, E_INSUFFICIENT_POOL_BALANCE);
 

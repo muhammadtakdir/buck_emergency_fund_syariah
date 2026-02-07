@@ -12,7 +12,7 @@ export function CDPHealthCard() {
 		<div className="p-8 bg-white rounded-[2rem] shadow-sm border border-slate-100 group">
 			<div className="flex justify-between items-start mb-8">
 				<div>
-					<h3 className="text-xl font-black text-slate-900 tracking-tight">External CDP Analytics</h3>
+					<h3 className="text-xl font-black text-slate-900 tracking-tight">External Bottle Analytics</h3>
 					<p className="text-slate-500 text-sm font-medium">Bucket Protocol Data Connection</p>
 				</div>
 				<div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
@@ -27,11 +27,11 @@ export function CDPHealthCard() {
 					<p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">${mockData.totalCollateral.toLocaleString()}</p>
 				</div>
 				<div className="space-y-1">
-					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bucket Debt (USDB)</p>
-					<p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{mockData.totalDebt.toLocaleString()} <span className="text-sm font-bold text-slate-300">USDB</span></p>
+					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bottle Debt (BUCK)</p>
+					<p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{mockData.totalDebt.toLocaleString()} <span className="text-sm font-bold text-slate-300">BUCK</span></p>
 				</div>
 				<div className="space-y-1">
-					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CDP Health Factor</p>
+					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bottle Health Factor</p>
 					<p className="text-3xl font-black text-emerald-500">{mockData.healthFactor}</p>
 				</div>
 			</div>
