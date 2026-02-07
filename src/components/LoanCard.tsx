@@ -88,7 +88,7 @@ export function LoanCard() {
 
 					<div className="space-y-2 text-[11px] mb-6">
 						<div className="flex justify-between text-slate-500 font-medium">
-							<span>Jaminan Locked</span>
+							<span>Collateral (Rahn) Locked</span>
 							<span className="font-bold text-slate-900">{vault.collateral.toFixed(2)} SUI</span>
 						</div>
 						<div className="flex justify-between text-slate-500 font-medium">

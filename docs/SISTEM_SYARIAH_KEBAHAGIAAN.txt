@@ -2,11 +2,11 @@ PANDUAN SISTEM SYARIAH: BUCK EMERGENCY FUND
 Prinsip Keadilan, Pertumbuhan, dan Kebahagiaan Bersama
 
 1. FILOSOFI DASAR
-Sistem ini dirancang bukan sebagai alat pencari keuntungan ribawi (bunga), melainkan sebagai wadah tolong-menolong (Ta'awun). Fokus utamanya adalah membantu pemegang CDP (Borrower) yang membutuhkan likuiditas mendesak tanpa harus kehilangan aset mereka, sekaligus memberi imbal hasil yang halal bagi penyedia dana (Lender).
+Sistem ini dirancang bukan sebagai alat pencari keuntungan ribawi (bunga), melainkan sebagai wadah tolong-menolong (Ta'awun). Fokus utamanya adalah membantu pemegang Bottle (CDP) yang membutuhkan likuiditas mendesak tanpa harus kehilangan aset mereka, sekaligus memberi imbal hasil yang halal bagi penyedia dana (Lender).
 
 2. MEKANISME ASET (SUI & BUCK)
 - BUCK (Pinjaman): Digunakan sebagai instrumen likuiditas yang stabil.
-- SUI (Rahn/Jaminan): Digunakan sebagai jaminan yang sah. SUI dikunci di dalam Vault pengguna sebagai bentuk komitmen (amanah) atas pinjaman yang diambil.
+- SUI (Collateral/Rahn): Digunakan sebagai jaminan yang sah. SUI dikunci di dalam Vault pengguna sebagai bentuk komitmen (amanah) atas pinjaman yang diambil.
 
 3. MODEL EKONOMI SYARIAH (ANTI-RIBA)
 Sistem ini mengganti sistem bunga dengan tiga pilar utama:
@@ -17,18 +17,18 @@ Ini adalah biaya jasa atas penggunaan platform dan infrastruktur yang dikembangk
 B. WAQF (Dana Abadi Sistem) - 40% dari Fee
 Setiap transaksi akan mengalokasikan sebagian dana untuk dikonversi menjadi likuiditas BUCK yang dikunci selamanya di dalam sistem (Waqf). 
 - Tujuan: Agar sistem secara bertahap memiliki modal sendiri. 
-- Visi: Di masa depan, sistem diharapkan bisa membiayai dirinya sendiri dari dana Waqf ini, sehingga ketergantungan pada lender eksternal berkurang dan biaya layanan bisa ditekan lebih murah lagi.
+- Visi: Di masa depan, sistem diharapkan bisa membiayai dirinya sendiri dari dana Waqf ini, sehingga ketergantungan pada lender eksternal berkurang.
 
 C. MUSHARAKAH (Bagi Hasil Lender) - 40% dari Fee
-Penyedia BUCK (Lender) dianggap sebagai mitra modal. Mereka tidak mendapatkan bunga tetap, melainkan mendapatkan bagi hasil dari aktivitas ekonomi di dalam pool. Nilai aset LP BUCK mereka bertumbuh seiring dengan masuknya biaya layanan dari peminjam.
+Penyedia BUCK (Lender) dianggap sebagai mitra modal. Mereka tidak mendapatkan bunga tetap, melainkan mendapatkan bagi hasil (Musharakah) dari aktivitas ekonomi di dalam pool.
 
 4. MANAJEMEN RISIKO & PERLINDUNGAN (MASHLAHAH)
 Sistem menerapkan "Safety Floor" pada harga SUI di angka 0.70 BUCK. 
-- Mengapa 0.70? Ini adalah langkah antisipasi (Saddu ad-Dzarai') untuk melindungi pemberi pinjaman dan stabilitas sistem dari volatilitas pasar yang ekstrem.
-- Transparansi: Peminjam diberitahu di awal bahwa jaminan mereka dinilai dengan harga konservatif agar tidak terjadi likuidasi mendadak yang merugikan peminjam.
+- Mengapa 0.70? Ini adalah langkah antisipasi (Saddu ad-Dzarai') untuk melindungi pemberi pinjaman dan stabilitas sistem.
+- Transparansi: Peminjam diberitahu di awal bahwa Collateral (Rahn) mereka dinilai dengan harga konservatif agar tidak terjadi likuidasi mendadak.
 
 5. KEBAHAGIAAN UNTUK SEMUA (WIN-WIN)
-- Bagi Borrower: Mendapatkan dana cepat tanpa bunga, jaminan aman, dan bisa diclaim/dipakai kembali dengan fleksibel.
+- Bagi Borrower: Mendapatkan dana cepat tanpa bunga, Collateral (Rahn) aman, dan bisa diclaim/dipakai kembali dengan fleksibel.
 - Bagi Lender: Mendapatkan tempat investasi yang halal, transparan, dan produktif.
 - Bagi Sistem/Dev: Mendapatkan dana operasional untuk terus berinovasi tanpa harus melakukan praktik eksploitatif.
 - Bagi Ekosistem: Terciptanya dana cadangan (Waqf) yang terus tumbuh dan menjadi milik publik/sistem selamanya.

@@ -82,7 +82,7 @@ export default function Home() {
 					</div>
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-emerald-400">2. $0.70 Price Floor</h4>
-						<p className="text-slate-400 text-sm">We value your jaminan at a conservative $0.70 floor. This gives you a massive safety buffer against market crashes, making your vault ultra-secure.</p>
+						<p className="text-slate-400 text-sm">We value your Collateral (Rahn) at a conservative $0.70 floor. This gives you a massive safety buffer against market crashes, making your vault ultra-secure.</p>
 					</div>
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-purple-400">3. Waqf Sustainability</h4>
@@ -90,7 +90,7 @@ export default function Home() {
 					</div>
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-orange-400">4. Fair Settle Policy</h4>
-						<p className="text-slate-400 text-sm">If your term expires, we don't just "take" your jaminan. We automatically use only what's needed to pay the debt and return the sisa (remainder) to you.</p>
+						<p className="text-slate-400 text-sm">If your term expires, we don't just "take" your Collateral (Rahn). We automatically use only what's needed to pay the debt and return the Remainder (Baqiyah) to you.</p>
 					</div>
 				</div>
 			</div>

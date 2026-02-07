@@ -38,7 +38,7 @@ To protect both lenders and the protocol, the system uses a **conservative safet
 *   **You Borrow:** 40 BUCK
 *   **Fixed Ujrah (10%):** +4 BUCK
 *   **Total To Repay:** **44 BUCK**
-*   **Outcome:** You receive 40 BUCK now. You pay back 44 BUCK over 2 years. You get your 100 SUI back. Even if SUI drops to $0.80, your position remains safe!
+*   **Outcome:** You receive 40 BUCK now. You pay back 44 BUCK over 2 years. You get your 100 SUI back. Even if SUI drops to $0.80, your Collateral (Rahn) remains safe!
 
 ## 🚀 Deployment Info (Sui Testnet)
 The protocol is live on the Sui Testnet. (Yield-Integrated Version: Feb 2026)
