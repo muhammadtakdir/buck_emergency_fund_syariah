@@ -1,18 +1,41 @@
-# Node.js
-node_modules/
-.next/
-out/
-build/
-.env*.local
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Move / Sui
-contracts/build/
-Move.lock
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Tools & Binaries (External)
-sui-testnet/
-*.exe
+# testing
+/coverage
 
-# OS
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
