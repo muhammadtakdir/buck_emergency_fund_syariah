@@ -41,11 +41,11 @@ To protect both lenders and the protocol, the system uses a **conservative safet
 *   **Outcome:** You receive 40 BUCK now. You pay back 44 BUCK over 2 years. You get your 100 SUI back. Even if SUI drops to $0.80, your Collateral (Rahn) remains safe!
 
 ## 🚀 Deployment Info (Sui Testnet)
-The protocol is live on the Sui Testnet. (Yield-Integrated Version: Feb 2026)
+The protocol is live on the Sui Testnet. (Corrected Active Version: Feb 2026)
 
-- **Package ID:** `0x76c2f97fc661f508eb2bbaa6a3d87a2f7a7056f3fc7ae38b18251a36fb3e9b14`
-- **Lending Pool (Shared):** `0x71c16bbb80ef782a55edba48bd569982daee79d636cb19fd072c9a719f97fbd3`
-- **Buck Treasury (Mock Faucet):** `0x0cc970c1dd8a434209566642b38dcf3e7a7490949354d4a1aebeeb83af7d4a2c`
+- **Package ID:** `0xd73c1e7d96e8a887f45f1765e2c1a65ae7fcba594b707084b2a60d7d281f2282`
+- **Lending Pool (Shared):** `0xe1f0ff0e05c9846bb82f2e4034f6dbb69520316938ce7972e77da94d1aeab333`
+- **Buck Treasury (Mock Faucet):** `0x9be89704a521764e9d30f21b1fa8382fbd6a5fe8dee62c879378a7f8b50a0bfc`
 
 ---
 
@@ -66,7 +66,7 @@ The protocol is live on the Sui Testnet. (Yield-Integrated Version: Feb 2026)
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/buck-emergency-fund
+   git clone https://github.com/muhammadtakdir/buck_emergency_fund_syariah
    cd buck-emergency-fund
    ```
 
@@ -82,14 +82,6 @@ The protocol is live on the Sui Testnet. (Yield-Integrated Version: Feb 2026)
    cd contracts
    sui move build
    ```
-
-### Interaction Flow
-1. **Lenders:** Provide BUCK to the `LendingPool` to receive LP tokens and earn Musharakah rewards.
-2. **Borrowers:** 
-   - Create a `UserVault`.
-   - Deposit `SUI` as collateral.
-   - Borrow `BUCK` (Ujrah is added upfront).
-   - Repay in installments or full to reclaim `SUI`.
 
 ---
 
