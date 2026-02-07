@@ -3,6 +3,7 @@ module buck_emergency_fund::emergency_fund {
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use sui::clock::Clock;
+    use sui::event;
     use buck_emergency_fund::bucket_mock::{Self, BUCKET_MOCK as BUCK, CDP};
     use buck_emergency_fund::credit_score::{Self, CreditScore};
     use buck_emergency_fund::price_feed_mock;
@@ -24,23 +25,15 @@ module buck_emergency_fund::emergency_fund {
     /// Main Lending Pool
     public struct LendingPool has key {
         id: UID,
-        
-        // Liquidity
-        buck_balance: Balance<BUCK>,      // Unified Liquidity (Lenders + Waqf)
+        buck_balance: Balance<BUCK>,      
         lp_buck_supply: TreasuryCap<EMERGENCY_FUND>,
-        
-        // Reserves
-        maintenance_balance: Balance<BUCK>, // Ujrah: For System Maintenance
-        waqf_reserve: Balance<EMERGENCY_FUND>,     // Waqf: System-owned LP shares (Permanent)
+        maintenance_balance: Balance<BUCK>, 
+        waqf_reserve: Balance<EMERGENCY_FUND>,     
 
-        // Configuration
-        service_fee_bps: u64,            // 1000 = 10% (Fixed Service Fee / Ujrah)
-        min_collateral_ratio: u64,       // 150 = 150%
-        
-        // Fee Splits (Total 100% of Fee)
-        split_maintenance_bps: u64,      // 2000 = 20%
-        split_waqf_bps: u64,             // 4000 = 40%
-        // Remaining 40% goes to Lenders automatically via share appreciation
+        service_fee_bps: u64,            
+        min_collateral_ratio: u64,       
+        split_maintenance_bps: u64,      
+        split_waqf_bps: u64,             
     }
 
     /// User Vault for managing Collateral and Debt
@@ -49,7 +42,22 @@ module buck_emergency_fund::emergency_fund {
         owner: address,
         collateral_balance: Balance<SUI>,
         principal_debt: u64,
-        fee_debt: u64, // Owed Service Fee
+        fee_debt: u64, 
+    }
+
+    // --- Events ---
+    public struct BorrowEvent has copy, drop {
+        vault_id: ID,
+        borrower: address,
+        amount: u64,
+        ujrah: u64,
+    }
+
+    public struct RepayEvent has copy, drop {
+        vault_id: ID,
+        payer: address,
+        amount: u64,
+        remaining_principal: u64,
     }
 
     #[allow(deprecated_usage)]
@@ -72,11 +80,11 @@ module buck_emergency_fund::emergency_fund {
             maintenance_balance: balance::zero(),
             waqf_reserve: balance::zero(), 
             
-            service_fee_bps: 1000,         // 10% Fixed Fee
+            service_fee_bps: 1000,         
             min_collateral_ratio: 150,
             
-            split_maintenance_bps: 2000,   // 20%
-            split_waqf_bps: 4000,          // 40%
+            split_maintenance_bps: 2000,   
+            split_waqf_bps: 4000,          
         };
         transfer::share_object(pool);
 
@@ -116,7 +124,6 @@ module buck_emergency_fund::emergency_fund {
         let remaining_collateral_sui = balance::value(&vault.collateral_balance) - amount;
         let total_obligation = vault.principal_debt + vault.fee_debt;
         
-        // Safety Check (Price 0.70)
         if (total_obligation > 0) {
             let predicted_price = price_feed_mock::get_predicted_low_price(); 
             let collateral_val_buck = (remaining_collateral_sui * predicted_price) / 1_000_000_000;
@@ -168,12 +175,12 @@ module buck_emergency_fund::emergency_fund {
         _clock: &Clock,
         ctx: &mut TxContext
     ): Coin<BUCK> {
+        // SECURITY FIX: Assert sender is vault owner
         assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
         assert!(bucket_mock::check_cdp_owner(cdp, tx_context::sender(ctx)), E_NOT_OWNER);
         assert!(amount_to_borrow > 0, E_ZERO_AMOUNT);
         assert!(balance::value(&pool.buck_balance) >= amount_to_borrow, E_INSUFFICIENT_POOL_BALANCE);
 
-        // 1. Calculate Ujrah (Service Fee)
         let tier = credit_score::get_tier(score);
         let discount_bps = credit_score::get_fee_discount(tier);
         let effective_fee_bps = if (pool.service_fee_bps > discount_bps) {
@@ -184,11 +191,9 @@ module buck_emergency_fund::emergency_fund {
         
         let fee_amount = (amount_to_borrow * effective_fee_bps) / 10000;
 
-        // 2. Record Debt
         vault.principal_debt = vault.principal_debt + amount_to_borrow;
         vault.fee_debt = vault.fee_debt + fee_amount;
 
-        // 3. Health Check
         let predicted_price = price_feed_mock::get_predicted_low_price();
         let collateral_sui = balance::value(&vault.collateral_balance);
         let collateral_val_buck = (collateral_sui * predicted_price) / 1_000_000_000;
@@ -198,10 +203,16 @@ module buck_emergency_fund::emergency_fund {
         
         assert!(collateral_val_buck >= required_collateral, E_INSUFFICIENT_COLLATERAL);
 
+        event::emit(BorrowEvent {
+            vault_id: object::id(vault),
+            borrower: vault.owner,
+            amount: amount_to_borrow,
+            ujrah: fee_amount,
+        });
+
         coin::take(&mut pool.buck_balance, amount_to_borrow, ctx)
     }
 
-    /// Repay with Sharia Split (Waqf, Ujrah, Profit)
     public fun repay(
         pool: &mut LendingPool,
         vault: &mut UserVault,
@@ -215,7 +226,6 @@ module buck_emergency_fund::emergency_fund {
         let mut payment_balance = coin::into_balance(payment);
         let mut remaining_amount = amount;
 
-        // 1. Pay Service Fee (Ujrah) First
         if (vault.fee_debt > 0) {
             let fee_payment = if (remaining_amount >= vault.fee_debt) {
                 vault.fee_debt
@@ -223,7 +233,6 @@ module buck_emergency_fund::emergency_fund {
                 remaining_amount
             };
 
-            // --- SUSTAINABILITY SPLIT ---
             let maintenance_amt = (fee_payment * pool.split_maintenance_bps) / 10000;
             balance::join(&mut pool.maintenance_balance, balance::split(&mut payment_balance, maintenance_amt));
 
@@ -231,7 +240,6 @@ module buck_emergency_fund::emergency_fund {
             if (waqf_amt > 0) {
                  let buck_res = balance::value(&pool.buck_balance);
                  let lp_sup = coin::total_supply(&pool.lp_buck_supply);
-                 
                  let shares_to_mint = if (lp_sup == 0) { waqf_amt } else { (waqf_amt * lp_sup) / buck_res };
                  
                  balance::join(&mut pool.buck_balance, balance::split(&mut payment_balance, waqf_amt));
@@ -242,7 +250,6 @@ module buck_emergency_fund::emergency_fund {
             remaining_amount = remaining_amount - fee_payment;
         };
 
-        // 2. Pay Principal
         if (remaining_amount > 0 && vault.principal_debt > 0) {
             let principal_payment = if (remaining_amount >= vault.principal_debt) {
                 vault.principal_debt
@@ -253,18 +260,23 @@ module buck_emergency_fund::emergency_fund {
             
             if (vault.principal_debt == 0 && vault.fee_debt == 0) {
                  credit_score::update_credit_score(score, 0, amount, clock); 
-            }
+            };
         };
 
-        // 3. Final Deposit
         if (balance::value(&payment_balance) > 0) {
              balance::join(&mut pool.buck_balance, payment_balance);
         } else {
             balance::destroy_zero(payment_balance);
-        }
+        };
+
+        event::emit(RepayEvent {
+            vault_id: object::id(vault),
+            payer: tx_context::sender(ctx),
+            amount,
+            remaining_principal: vault.principal_debt,
+        });
     }
 
-    /// Claim Ujrah (Maintenance Fee)
     public fun claim_maintenance(
         _: &MaintenanceCap,
         pool: &mut LendingPool,
@@ -275,7 +287,6 @@ module buck_emergency_fund::emergency_fund {
         coin::from_balance(balance::split(&mut pool.maintenance_balance, amount), ctx)
     }
 
-    /// View Waqf Size (Transparency)
     public fun get_waqf_shares(pool: &LendingPool): u64 {
         balance::value(&pool.waqf_reserve)
     }
