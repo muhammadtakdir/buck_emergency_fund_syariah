@@ -1,0 +1,34 @@
+# CARA KERJA KONTRAK SMART CONTRACT - BUCK EMERGENCY FUND
+
+Kontrak pintar BUCK Emergency Fund dirancang menggunakan bahasa Move 2024 di jaringan Sui. Berikut adalah penjelasan teknis mengenai alur dan logika kerjanya:
+
+1. ARSITEKTUR MODUL
+Sistem terdiri dari tiga modul utama:
+- emergency_fund.move: Menangani logika inti peminjaman, penarikan, dan pembayaran.
+- credit_score.move: Melacak reputasi pengguna dan menentukan diskon biaya (fee).
+- protocol_reserve.move: Mengelola cadangan likuiditas SUI dalam protokol.
+
+2. ALUR PENARIKAN (WITHDRAWAL)
+- Verifikasi: Kontrak memvalidasi kepemilikan CDP di Bucket Protocol.
+- Kalkulasi Risiko: Memastikan Collateral Ratio tetap di atas 150% setelah penarikan.
+- Pembuatan Loan: Objek 'EmergencyLoan' dibuat dengan biaya (fee) 5% dan deadline 14 hari.
+- Transfer: Dana SUI dikirim langsung ke dompet pengguna dari Protocol Reserve.
+
+3. SISTEM SKOR KREDIT (CREDIT SCORE)
+- Skor Dinamis: Rentang skor 0-1000 yang terbagi dalam 5 Tier.
+- Reward: Bayar tepat waktu menambah +10 poin dan menaikkan Tier.
+- Diskon Fee: Tier yang lebih tinggi mendapatkan potongan biaya pinjaman (hingga 500 bps atau 5%).
+- Penalti: Keterlambatan atau likuidasi akan memotong skor secara signifikan.
+
+4. LOGIKA PEMBAYARAN (REPAYMENT)
+- Perhitungan Otomatis: Menghitung total (Pokok + Fee - Diskon Tier).
+- Early Repay: Memberikan diskon tambahan jika dibayar dalam waktu kurang dari 7 hari.
+- Update Status: Setelah lunas, objek loan diperbarui dan skor kredit pengguna ditingkatkan.
+
+5. KEAMANAN
+- Collateral Guard: Membatasi penarikan berdasarkan harga SUI real-time dari Oracle.
+- Late Penalty: Menerapkan denda 10% bagi pinjaman yang melewati batas 14 hari.
+- Capability-Based: Menggunakan EmergencyCapability untuk melacak histori pengguna secara on-chain.
+
+6. INTEGRASI BUCKET PROTOCOL
+- Kontrak membaca data langsung dari Bucket CDP untuk memantau nilai agunan dan hutang (USDB) pengguna guna memastikan sistem tetap solvent.

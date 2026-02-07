@@ -1,0 +1,11 @@
+[package]
+name = "buck_emergency_fund"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+
+[addresses]
+buck_emergency_fund = "0x0"
+bucket = "0x5497525287f7a77517c80526019a868f0a0c4f80"
