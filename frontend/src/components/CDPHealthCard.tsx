@@ -3,42 +3,46 @@
 export function CDPHealthCard() {
 	// In a real app, fetch data from Bucket Protocol here
 	const mockData = {
-		collateral: 100,
-		debt: 140,
-		ratio: 200,
-	};
-
-	const getRatioColor = (ratio: number) => {
-		if (ratio > 200) return 'text-green-600 bg-green-50';
-		if (ratio > 150) return 'text-yellow-600 bg-yellow-50';
-		return 'text-red-600 bg-red-50';
+		totalCollateral: 1250.50,
+		totalDebt: 450.00,
+		healthFactor: 2.78,
 	};
 
 	return (
-		<div className="p-6 bg-white rounded-xl shadow-sm border border-slate-100">
-			<h3 className="text-lg font-semibold text-slate-900 mb-4">CDP Health Overview</h3>
-			<div className="grid grid-cols-2 gap-4">
+		<div className="p-8 bg-white rounded-[2rem] shadow-sm border border-slate-100 group">
+			<div className="flex justify-between items-start mb-8">
 				<div>
-					<p className="text-sm text-slate-500">Collateral</p>
-					<p className="text-2xl font-bold text-slate-900">{mockData.collateral} SUI</p>
+					<h3 className="text-xl font-black text-slate-900 tracking-tight">External CDP Analytics</h3>
+					<p className="text-slate-500 text-sm font-medium">Bucket Protocol Data Connection</p>
 				</div>
-				<div>
-					<p className="text-sm text-slate-500">Debt</p>
-					<p className="text-2xl font-bold text-slate-900">{mockData.debt} USDB</p>
+				<div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+					<span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-ping" />
+					Connected
 				</div>
 			</div>
-			<div className="mt-6">
-				<div className="flex justify-between items-center mb-2">
-					<p className="text-sm font-medium text-slate-700">Collateral Ratio</p>
-					<span className={`px-2 py-1 rounded text-xs font-bold ${getRatioColor(mockData.ratio)}`}>
-						{mockData.ratio}%
-					</span>
+
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div className="space-y-1">
+					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Collateral Value</p>
+					<p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">${mockData.totalCollateral.toLocaleString()}</p>
 				</div>
-				<div className="w-full bg-slate-100 rounded-full h-2">
-					<div 
-						className="bg-green-500 h-2 rounded-full" 
-						style={{ width: `${Math.min(mockData.ratio / 3, 100)}%` }}
-					/>
+				<div className="space-y-1">
+					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bucket Debt (USDB)</p>
+					<p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{mockData.totalDebt.toLocaleString()} <span className="text-sm font-bold text-slate-300">USDB</span></p>
+				</div>
+				<div className="space-y-1">
+					<p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CDP Health Factor</p>
+					<p className="text-3xl font-black text-emerald-500">{mockData.healthFactor}</p>
+				</div>
+			</div>
+
+			<div className="mt-8 pt-8 border-t border-slate-50">
+				<div className="flex justify-between items-center mb-2">
+					<span className="text-xs font-bold text-slate-400 uppercase">Liquidation Threshold</span>
+					<span className="text-xs font-black text-slate-900">1.50</span>
+				</div>
+				<div className="w-full bg-slate-50 h-3 rounded-full overflow-hidden p-0.5 border border-slate-100">
+					<div className="bg-gradient-to-r from-emerald-400 to-blue-500 h-full rounded-full w-[85%]" />
 				</div>
 			</div>
 		</div>
