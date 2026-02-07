@@ -80,4 +80,4 @@ The protocol is live on the Sui Testnet. (Updated after Security Audit Feb 2026)
 - [Move 2024 Migration](./AI_DISCLOSURE.md)
 
 ## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
