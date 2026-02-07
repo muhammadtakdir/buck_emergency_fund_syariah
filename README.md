@@ -22,6 +22,24 @@ To protect both lenders and the protocol, the system uses a **conservative safet
 - **Bucket Integration:** Direct integration with Bucket Protocol **Bottles** (CDPs) ensures verified collateral health.
 - **Independence:** The risk engine self-regulates to prevent mass liquidations and ensure the Waqf remains solvent.
 
+## ⚙️ How It Works
+1.  **Lock Collateral:** You deposit SUI into your private `UserVault`.
+2.  **Conservative Valuation:** The system values your SUI at a **$0.70 price floor** (safety buffer) to determine your borrow limit.
+3.  **Borrow BUCK:** You receive BUCK tokens instantly. A fixed **Ujrah (Service Fee)** is added to your total obligation upfront.
+4.  **Flexible Repayment:** You have up to **24 months** to repay the fixed total. You can pay in small installments or all at once.
+5.  **Claim Assets:** Once your obligation is zero, you claim your SUI collateral back.
+6.  **Out of Cash?** If you cannot find BUCK to repay, you can settle your debt using a portion of your locked SUI collateral at the current market price.
+
+### 📝 Real-World Example
+*   **Current SUI Price:** $1.50
+*   **Your Deposit:** 100 SUI ($150 market value)
+*   **BEFS Valuation:** $0.70/SUI → $70 "Safe Value"
+*   **Max Borrow (150% Ratio):** $70 / 1.5 = **~46.6 BUCK**
+*   **You Borrow:** 40 BUCK
+*   **Fixed Ujrah (10%):** +4 BUCK
+*   **Total To Repay:** **44 BUCK**
+*   **Outcome:** You receive 40 BUCK now. You pay back 44 BUCK over 2 years. You get your 100 SUI back. Even if SUI drops to $0.80, your position remains safe!
+
 ## 🚀 Deployment Info (Sui Testnet)
 The protocol is live on the Sui Testnet. (Final Functional Version: Feb 2026)
 
