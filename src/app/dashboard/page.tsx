@@ -55,8 +55,8 @@ export default function Dashboard() {
 		return 0;
 	};
 
-	const cashReserve = poolFields ? getBal(poolFields.usdb_reserve) / 1_000_000_000 : 0;
-	const stakedInBucket = poolFields ? getBal(poolFields.susdb_reserve) / 1_000_000_000 : 0;
+	const cashReserve = poolFields ? getBal(poolFields.buck_reserve) / 1_000_000_000 : 0;
+	const stakedInBucket = poolFields ? getBal(poolFields.susdb_balance) / 1_000_000_000 : 0;
 	const suiRewards = poolFields ? getBal(poolFields.sui_reserve) / 1_000_000_000 : 0;
 	const waqfAmount = poolFields ? getBal(poolFields.waqf_reserve) / 1_000_000_000 : 0;
 	const maintenanceAmount = poolFields ? getBal(poolFields.maintenance_balance) / 1_000_000_000 : 0;
@@ -176,6 +176,10 @@ export default function Dashboard() {
 								<div className="p-6 bg-slate-800/30 rounded-2xl border border-slate-700/50 shadow-sm">
 									<p className="text-[10px] text-slate-500 font-bold uppercase mb-2 tracking-widest">Total SUI Locked</p>
 									<p className="text-2xl font-black text-white">{protocolTotalSuiLocked.toFixed(4)} <span className="text-xs text-slate-500 font-bold uppercase">SUI</span></p>
+								</div>
+								<div className="p-6 bg-slate-800/30 rounded-2xl border border-slate-700/50 shadow-sm">
+									<p className="text-[10px] text-slate-500 font-bold uppercase mb-2 tracking-widest">USDB Reserve</p>
+									<p className="text-2xl font-black text-white">{cashReserve.toFixed(4)} <span className="text-xs text-slate-500 font-bold uppercase">USDB</span></p>
 								</div>
 								<div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/20 shadow-sm">
 									<p className="text-[10px] text-emerald-400 font-bold uppercase mb-2 tracking-widest">Protocol Liquidity</p>
