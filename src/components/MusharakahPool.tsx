@@ -37,6 +37,14 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
     const displayBuck = totalBuckNum > 0 && totalBuckNum < 0.01 ? totalBuckNum.toFixed(6) : totalBuckNum.toFixed(2);
     const displayLp = totalLpNum > 0 && totalLpNum < 0.01 ? totalLpNum.toFixed(6) : totalLpNum.toFixed(2);
 
+    const checkLimit = (val: string, action: string) => {
+        if (Number(val) > 0.1) {
+            alert(`⚠️ Testnet Demo Limit\n\nTo prevent arithmetic overflow in this demo version (u64 logic), please use amounts <= 0.1 USDB.\n\nThis limit will be removed in the Mainnet version which uses full u128 precision for infinite scalability.`);
+            return false;
+        }
+        return true;
+    };
+
 	// FAUCET: Request free USDB
 	const handleFaucet = async () => {
 		if (!account) return;
@@ -57,6 +65,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 
 	const handleDeposit = async () => {
 		if (!account) return;
+        if (!checkLimit(amount, 'Deposit')) return;
 		
 		const coins = await suiClient.getCoins({ owner: account.address, coinType: BUCK_COIN_TYPE });
 		if (coins.data.length === 0) return alert("You don't have any USDB. Please use the Faucet first!");
@@ -96,6 +105,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 
 	const handleWithdraw = async () => {
 		if (!account) return;
+        if (!checkLimit(withdrawAmount, 'Withdraw')) return;
 		
 		const lpCoins = await suiClient.getCoins({ owner: account.address, coinType: LP_COIN_TYPE });
 		if (lpCoins.data.length === 0) return alert("No LP shares found!");
@@ -155,7 +165,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                                 type="number" 
                                 value={amount} 
                                 onChange={(e) => setAmount(e.target.value)} 
-                                placeholder="Enter amount (Empty for ALL)" 
+                                placeholder="Enter amount (Max 0.1)" 
                                 className="w-full p-4 pr-16 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-emerald-500/50 outline-none font-bold text-white text-lg transition-all" 
                             />
                             <span className="absolute right-4 top-4 font-bold text-slate-600 text-sm">USDB</span>
@@ -182,7 +192,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                                 type="number" 
                                 value={withdrawAmount} 
                                 onChange={(e) => setWithdrawAmount(e.target.value)} 
-                                placeholder="Enter amount (Empty for ALL)" 
+                                placeholder="Enter amount (Max 0.1)" 
                                 className="w-full p-4 pr-20 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-blue-500/50 outline-none font-bold text-white text-lg transition-all" 
                             />
                             <span className="absolute right-4 top-4 font-bold text-slate-600 text-sm uppercase">lpUSDB</span>

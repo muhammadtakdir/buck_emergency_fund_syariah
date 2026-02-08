@@ -67,6 +67,11 @@ export function EmergencyForm({ onTransactionSuccess }: Props) {
 	const handleBorrow = async () => {
 		if (!account || !amount || !suiAmount || !agreed || isExceeded) return;
 
+        if (Number(amount) > 0.1) {
+            alert(`⚠️ Testnet Demo Limit\n\nTo prevent arithmetic overflow in this demo version (u64 logic), please borrow amounts <= 0.1 USDB.\n\nThis limit will be removed in the Mainnet version which uses full u128 precision for infinite scalability.`);
+            return;
+        }
+
 		const tx = new Transaction();
 		const vault = tx.moveCall({ target: `${PACKAGE_ID}::${MODULE_EMERGENCY_FUND}::create_vault`, arguments: [] });
 
@@ -142,7 +147,7 @@ export function EmergencyForm({ onTransactionSuccess }: Props) {
 							<span className={`text-[10px] font-bold uppercase ${isExceeded ? 'text-red-400' : 'text-slate-600'}`}>Max: {maxBorrowable.toFixed(2)}</span>
 						</div>
 						<div className="relative">
-							<input type="number" value={amount} onChange={(e) => { setAmount(e.target.value); setIsAutoFilled(true); }} placeholder="0.00" className={`w-full p-4 pr-16 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-blue-500/50 outline-none font-bold transition-all ${isExceeded ? 'text-red-400' : 'text-blue-400'}`} />
+							<input type="number" value={amount} onChange={(e) => { setAmount(e.target.value); setIsAutoFilled(true); }} placeholder="Max 0.1 USDB" className={`w-full p-4 pr-16 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-blue-500/50 outline-none font-bold transition-all ${isExceeded ? 'text-red-400' : 'text-blue-400'}`} />
 							<span className="absolute right-4 top-4 font-bold text-slate-600 text-sm uppercase">USDB</span>
 						</div>
 					</div>
