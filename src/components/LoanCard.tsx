@@ -38,28 +38,36 @@ export function LoanCard({ refreshTrigger, onTransactionSuccess }: Props) {
 	if (isLoading) return <div className="animate-pulse bg-slate-800/40 h-48 rounded-3xl" />;
 
 	const getBal = (f: any) => {
-		if (!f) return 0;
-		if (typeof f === 'string' || typeof f === 'number') return Number(f);
-		if (f.fields && f.fields.value) return Number(f.fields.value);
-		if (f.value) return Number(f.value);
-		return 0;
+		if (!f) return 0n;
+		if (typeof f === 'string' || typeof f === 'number') return BigInt(f);
+		if (f.fields && f.fields.value) return BigInt(f.fields.value);
+		if (f.value) return BigInt(f.value);
+		return 0n;
 	};
 
 	const vaults = objects?.data.map((obj: any) => {
 		const fields = obj.data?.content?.fields;
 		if (!fields) return null;
 		
-        const principal = Number(fields.principal_debt);
-        const fee = Number(fields.fee_debt);
-        const isPaidOff = principal === 0 && fee === 0;
+        const principalRaw = BigInt(fields.principal_debt);
+        const feeRaw = BigInt(fields.fee_debt);
+        const totalDebtRaw = principalRaw + feeRaw;
+        const isPaidOff = totalDebtRaw === 0n;
+
+        // Display logic: show more decimals if debt is very small
+        const totalDebtNum = Number(totalDebtRaw) / 1_000_000_000;
+        const displayDebt = totalDebtNum > 0 && totalDebtNum < 0.01 
+            ? totalDebtNum.toFixed(6) 
+            : totalDebtNum.toFixed(2);
 
 		return {
 			objectId: obj.data?.objectId,
 			id: obj.data?.objectId.substring(0, 6),
-			principal: principal / 1_000_000_000,
-			ujrah: fee / 1_000_000_000,
-			collateral: getBal(fields.collateral_balance) / 1_000_000_000,
-			deadline: fields.deadline === '0' ? 'Contract Active' : 'Active',
+			principalRaw,
+            feeRaw,
+            totalDebtRaw,
+            displayDebt,
+			collateral: Number(getBal(fields.collateral_balance)) / 1_000_000_000,
 			isPaidOff
 		};
 	}).filter(v => v !== null) || [];
@@ -68,19 +76,24 @@ export function LoanCard({ refreshTrigger, onTransactionSuccess }: Props) {
 
 	const handleRepayBUCK = async (vault: any) => {
 		if (!account) return;
-        const inputAmount = repayAmount[vault.objectId] || (vault.principal + vault.ujrah).toString();
-        if (Number(inputAmount) <= 0) return alert("Enter valid amount");
-
-		const tx = new Transaction();
+        
+        const tx = new Transaction();
 		let scoreObj = scoreObjectId ? tx.object(scoreObjectId) : tx.moveCall({ target: `${PACKAGE_ID}::credit_score::create_credit_score`, arguments: [] });
 
 		const coins = await suiClient.getCoins({ owner: account.address, coinType: BUCK_COIN_TYPE });
 		if (coins.data.length === 0) return alert("No USDB found to repay!");
 
-		const rawAmount = BigInt(Math.floor(Number(inputAmount) * 1_000_000_000));
+        // CRITICAL FIX: Use raw BigInt for full repayment to avoid dust
+        const inputStr = repayAmount[vault.objectId];
+		const repayAmountRaw = inputStr 
+            ? BigInt(Math.floor(Number(inputStr) * 1_000_000_000)) 
+            : vault.totalDebtRaw;
+
+		if (repayAmountRaw <= 0n) return alert("Enter valid amount");
+
 		const coinIds = coins.data.map(c => c.coinObjectId);
 		if (coinIds.length > 1) tx.mergeCoins(tx.object(coinIds[0]), coinIds.slice(1).map(id => tx.object(id)));
-		const [buckToRepay] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(rawAmount)]);
+		const [buckToRepay] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(repayAmountRaw)]);
 
 		tx.moveCall({
 			target: `${PACKAGE_ID}::${MODULE_EMERGENCY_FUND}::repay`,
@@ -108,7 +121,7 @@ export function LoanCard({ refreshTrigger, onTransactionSuccess }: Props) {
 		let scoreObj = scoreObjectId ? tx.object(scoreObjectId) : tx.moveCall({ target: `${PACKAGE_ID}::credit_score::create_credit_score`, arguments: [] });
 
 		const effectivePrice = suiPrice || 1.5;
-		const totalDebt = vault.principal + vault.ujrah;
+		const totalDebt = Number(vault.totalDebtRaw) / 1_000_000_000;
 		const suiNeeded = (totalDebt / effectivePrice) * 1.01;
 
 		tx.moveCall({
@@ -174,7 +187,7 @@ export function LoanCard({ refreshTrigger, onTransactionSuccess }: Props) {
 						<div>
 							<p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase mb-1">ID: {vault.id}</p>
 							<p className={`text-xl font-black ${vault.isPaidOff ? 'text-emerald-400' : 'text-white'}`}>
-								{(vault.principal + vault.ujrah).toFixed(2)} <span className="text-xs opacity-40">USDB</span>
+								{vault.displayDebt} <span className="text-xs opacity-40">USDB</span>
 							</p>
 						</div>
 						<div className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest shadow-sm ${vault.isPaidOff ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
@@ -199,7 +212,7 @@ export function LoanCard({ refreshTrigger, onTransactionSuccess }: Props) {
                                         type="number" 
                                         value={repayAmount[vault.objectId] || ''} 
                                         onChange={(e) => setRepayAmount(prev => ({ ...prev, [vault.objectId]: e.target.value }))}
-                                        placeholder="Enter USDB amount"
+                                        placeholder="Enter amount (Leave empty for ALL)"
                                         disabled={!!agreedToSui[vault.objectId]}
                                         className={`w-full p-3 pr-12 bg-slate-900/50 border border-slate-700/50 rounded-xl outline-none font-bold text-sm transition-all ${agreedToSui[vault.objectId] ? 'opacity-30 cursor-not-allowed' : 'text-white focus:border-blue-500/50'}`} 
                                     />
