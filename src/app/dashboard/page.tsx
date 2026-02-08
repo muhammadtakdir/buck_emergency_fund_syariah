@@ -55,8 +55,8 @@ export default function Dashboard() {
 		return 0;
 	};
 
-	const cashReserve = poolFields ? getBal(poolFields.buck_reserve) / 1_000_000_000 : 0;
-	const stakedInBucket = poolFields ? getBal(poolFields.susdb_balance) / 1_000_000_000 : 0;
+	const cashReserve = poolFields ? getBal(poolFields.usdb_reserve) / 1_000_000_000 : 0;
+	const stakedInBucket = poolFields ? getBal(poolFields.susdb_reserve) / 1_000_000_000 : 0;
 	const suiRewards = poolFields ? getBal(poolFields.sui_reserve) / 1_000_000_000 : 0;
 	const waqfAmount = poolFields ? getBal(poolFields.waqf_reserve) / 1_000_000_000 : 0;
 	const maintenanceAmount = poolFields ? getBal(poolFields.maintenance_balance) / 1_000_000_000 : 0;
