@@ -140,7 +140,13 @@ export default function Dashboard() {
 							{activeTab === 'borrow' ? (
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 									<EmergencyForm onTransactionSuccess={refreshData} />
-									<CreditScore refreshTrigger={refreshTrigger} />
+                                    <div className="space-y-8">
+									    <CreditScore refreshTrigger={refreshTrigger} />
+                                        <div className="space-y-4">
+                                            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] px-2">My Active Positions</h3>
+                                            <LoanCard refreshTrigger={refreshTrigger} onTransactionSuccess={refreshData} />
+                                        </div>
+                                    </div>
 								</div>
 							) : (
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -189,10 +195,6 @@ export default function Dashboard() {
 									<p className="text-[10px] text-slate-500 font-bold uppercase mb-2 tracking-widest">Operation Fund</p>
 									<p className="text-2xl font-black text-white">{maintenanceAmount.toFixed(4)} <span className="text-xs text-slate-500 font-bold uppercase">USDB</span></p>
 								</div>
-							</div>
-							<div className="space-y-4 pt-4">
-								<h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] px-2">My Active Positions</h3>
-								<LoanCard refreshTrigger={refreshTrigger} onTransactionSuccess={refreshData} />
 							</div>
 						</aside>
 					</div>
