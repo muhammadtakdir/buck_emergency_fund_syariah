@@ -18,8 +18,7 @@ export default function Home() {
 					BUCK <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">Emergency Fund</span>
 				</h1>
 				<p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-					Instant BUCK liquidity for Bottle holders using the ethical <strong>Waqf & Ujrah</strong> system. 
-					Zero interest, zero stress, and up to 2 years repayment.
+					BUCK Emergency Fund is a decentralized, Sharia-compliant lending protocol on the Sui blockchain ethical <strong>Waqf & Ujrah</strong> system. Zero interest, zero stress, and up to 2 years repayment. It provides instant <strong>$USDB</strong> liquidity to users who lock <strong>$SUI</strong> as collateral.
 				</p>
 				<div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
 					<Link 
@@ -91,6 +90,43 @@ export default function Home() {
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-orange-400">4. Fair Settle Policy</h4>
 						<p className="text-slate-400 text-sm">If your term expires, we don't just "take" your Collateral (Rahn). We automatically use only what's needed to pay the debt and return the Remainder (Baqiyah) to you.</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Roadmap / Milestones */}
+			<div className="mt-32 max-w-6xl w-full relative z-10">
+				<h2 className="text-sm font-black text-blue-500 tracking-[0.3em] uppercase mb-12 text-center">Protocol Roadmap</h2>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+					<div className="p-8 bg-blue-600/10 rounded-3xl border border-blue-500/20 relative overflow-hidden group">
+						<div className="absolute top-0 right-0 p-4">
+							<span className="px-3 py-1 bg-blue-600 text-[10px] font-black rounded-full text-white uppercase tracking-widest">Active</span>
+						</div>
+						<h3 className="text-xl font-black text-white mb-4 uppercase">Stage 1: Testnet Launch</h3>
+						<p className="text-slate-400 text-sm leading-relaxed mb-4">
+							Core protocol features live on Sui Testnet. Users can test lending, borrowing, and the unique Al-Baqiyah fair settlement system.
+						</p>
+						<ul className="text-[11px] font-bold text-blue-400 uppercase tracking-widest space-y-2">
+							<li>• On-chain Credit Scoring</li>
+							<li>• Real-time Price Feeds</li>
+							<li>• Automated Stats Sync</li>
+						</ul>
+					</div>
+
+					<div className="p-8 bg-emerald-500/5 rounded-3xl border border-emerald-500/10 relative overflow-hidden group">
+						<div className="absolute top-0 right-0 p-4">
+							<span className="px-3 py-1 bg-slate-800 text-[10px] font-black rounded-full text-slate-500 uppercase tracking-widest">Upcoming</span>
+						</div>
+						<h3 className="text-xl font-black text-white mb-4 uppercase">Stage 2: Mainnet & Dual Rewards</h3>
+						<p className="text-slate-400 text-sm leading-relaxed mb-4">
+							Full Mainnet deployment with deeper integration into the Sui DeFi ecosystem.
+						</p>
+						<div className="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+							<p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-2">Bucket Protocol Integration</p>
+							<p className="text-[11px] text-slate-400 leading-relaxed">
+								Lenders will earn <strong>dual rewards</strong>: Platform fees from BEFS + <strong>SUI rewards</strong> from the Bucket USDB Saving Pool simultaneously.
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>

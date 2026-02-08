@@ -97,6 +97,25 @@ export default function Dashboard() {
 				</div>
 			) : (
 				<div className="max-w-7xl mx-auto px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+					{/* Roadmap Notification Banner */}
+					<div className="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+						<div className="flex items-center gap-3">
+							<span className="flex h-3 w-3 relative">
+								<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+								<span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+							</span>
+							<p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
+								Stage 1: Sui Testnet
+							</p>
+						</div>
+						<p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight text-center md:text-left">
+							Roadmap: <span className="text-white">Mainnet Launch</span> will feature full <span className="text-blue-400">Bucket Protocol</span> integration for Dual Rewards.
+						</p>
+						<a href="https://twitter.com/educhainmag" target="_blank" rel="noreferrer" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black rounded-xl transition-all uppercase tracking-widest">
+							Follow Updates
+						</a>
+					</div>
+
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 						<div className="p-5 bg-slate-800/40 rounded-2xl border border-slate-700/50 shadow-sm transition-all hover:bg-slate-800/60">
 							<p className="text-[10px] text-slate-500 font-bold uppercase mb-1 tracking-widest">Wallet SUI</p>

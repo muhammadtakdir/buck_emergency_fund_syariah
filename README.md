@@ -4,14 +4,9 @@
 ---
 
 ## 📖 Overview
-**BUCK Emergency Fund Sharia (BEFS)** is a decentralized, ethical lending protocol on the Sui blockchain. It provides instant **USDB** (stablecoin) liquidity to users who lock **SUI** as collateral (**Rahn**).
+**BUCK Emergency Fund** is a decentralized, Sharia-compliant lending protocol on the Sui blockchain ethical **Waqf & Ujrah** system. Zero interest, zero stress, and up to 2 years repayment. It provides instant **$USDB** liquidity to users who lock **$SUI** as collateral. 
 
-Unlike traditional protocols, BEFS is built on **Islamic Finance principles**, replacing interest (Riba) with a fixed **Service Fee (Ujrah)** and a permanent **System-Owned Endowment (Waqf)**. 
-
-### 💎 The Yield Layer
-BEFS doesn't just hold assets; it optimizes them:
-1.  **Halal Yield:** Idle USDB in the pool is automatically staked in the **Bucket Protocol Saving Pool**, earning SUI rewards for partners.
-2.  **Sustainability:** 40% of all service fees are converted into LP shares and locked in the **Waqf Reserve**, ensuring the protocol grows stronger and more liquid over time without depending solely on new deposits.
+Designed with ethical finance in mind, the protocol replaces traditional interest (Riba) with a sustainable model of **Service Fees (Ujrah)** and a **System-Owned Endowment (Waqf)**. The system provides real-time transparency with live tracking of **Total SUI Locked (TVL)** and system-wide liquidity.
 
 ---
 
@@ -64,6 +59,20 @@ Latest Build: Feb 2026
 ### Step 5: Watch the Waqf Grow
 1.  After any repayment, look at the **"System Waqf Reserve"** in the Global Stats.
 2.  You will see it increase, showing how every user helps build the community endowment.
+
+## 🚀 Project Status & Roadmap
+
+### 🟡 Current Stage: Sui Testnet
+The protocol is currently live on the Sui Testnet for public testing. 
+- Real-time SUI/USD price integration.
+- Functional Waqf & Ujrah economy.
+- Automated Dashboard synchronization.
+
+### 🟢 Future Stage: Sui Mainnet (Full Integration)
+For the Mainnet launch, BEFS will feature **Full Layered Integration** with **Bucket Protocol**:
+1.  **Dual Reward System**: Lenders providing USDB will not only earn from BEFS liquidity fees but also simultaneously receive **SUI Rewards** from the **Bucket USDB Saving Pool**.
+2.  **Maximized Halal Yield**: All idle USDB in the BEFS Lending Pool will be automatically routed to Bucket's yield strategies, ensuring that lenders' capital is always working for them in a Sharia-compliant manner.
+3.  **Real-Time Reward Tracking**: A unified dashboard to track rewards from both BEFS and Bucket Protocol.
 
 ---
 
