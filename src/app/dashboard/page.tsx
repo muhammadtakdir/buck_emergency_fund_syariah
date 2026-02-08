@@ -35,7 +35,7 @@ export default function Dashboard() {
         }
     }, [refreshTrigger, account, refetchSui, refetchBuck, refetchLp, refetchPool]);
 
-    // Background polling for global stats
+    // Background polling
     useEffect(() => {
         const interval = setInterval(() => refetchPool(), 10000);
         return () => clearInterval(interval);
@@ -97,7 +97,7 @@ export default function Dashboard() {
 				</div>
 			) : (
 				<div className="max-w-7xl mx-auto px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-					{/* Roadmap Notification Banner */}
+					{/* Roadmap Banner */}
 					<div className="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
 						<div className="flex items-center gap-3">
 							<span className="flex h-3 w-3 relative">
@@ -119,15 +119,15 @@ export default function Dashboard() {
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 						<div className="p-5 bg-slate-800/40 rounded-2xl border border-slate-700/50 shadow-sm transition-all hover:bg-slate-800/60">
 							<p className="text-[10px] text-slate-500 font-bold uppercase mb-1 tracking-widest">Wallet SUI</p>
-							<p className="text-xl font-black text-white">{totalSui.toFixed(3)}</p>
+							<p className="text-xl font-black text-white">{totalSui.toFixed(4)}</p>
 						</div>
 						<div className="p-5 bg-slate-800/40 rounded-2xl border border-slate-700/50 shadow-sm transition-all hover:bg-slate-800/60">
 							<p className="text-[10px] text-slate-500 font-bold uppercase mb-1 tracking-widest">Wallet USDB</p>
-							<p className="text-xl font-black text-white">{totalBuck.toFixed(2)}</p>
+							<p className="text-xl font-black text-white">{totalBuck.toFixed(4)}</p>
 						</div>
 						<div className="p-5 bg-blue-600/10 rounded-2xl border border-blue-500/20 shadow-sm transition-all hover:bg-blue-600/20">
 							<p className="text-[10px] text-blue-400 font-bold uppercase mb-1 tracking-widest">Your LP Shares</p>
-							<p className="text-xl font-black text-blue-400">{totalLP.toFixed(2)} <span className="text-xs opacity-60">lpUSDB</span></p>
+							<p className="text-xl font-black text-blue-400">{totalLP.toFixed(4)} <span className="text-xs opacity-60">lp</span></p>
 						</div>
 						<div className="p-5 bg-emerald-600/10 rounded-2xl border border-emerald-500/20 shadow-sm transition-all hover:bg-emerald-600/20">
 							<p className="text-[10px] text-emerald-400 font-bold uppercase mb-1 tracking-widest">System Status</p>
@@ -151,7 +151,7 @@ export default function Dashboard() {
 										<div className="space-y-8">
 											<div>
 												<p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 leading-none">Staked in Bucket</p>
-												<p className="text-3xl font-black text-white">{stakedInBucket.toLocaleString()} <span className="text-sm font-bold text-slate-500 uppercase">sUSDB</span></p>
+												<p className="text-3xl font-black text-white">{stakedInBucket.toFixed(4)} <span className="text-sm font-bold text-slate-500 uppercase">sUSDB</span></p>
 											</div>
 											<div>
 												<p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 leading-none">Unclaimed SUI Rewards</p>
@@ -175,11 +175,11 @@ export default function Dashboard() {
 								</div>
 								<div className="p-6 bg-slate-800/30 rounded-2xl border border-slate-700/50 shadow-sm">
 									<p className="text-[10px] text-slate-500 font-bold uppercase mb-2 tracking-widest">Total SUI Locked</p>
-									<p className="text-2xl font-black text-white">{protocolTotalSuiLocked.toFixed(3)} <span className="text-xs text-slate-500 font-bold uppercase">SUI</span></p>
+									<p className="text-2xl font-black text-white">{protocolTotalSuiLocked.toFixed(4)} <span className="text-xs text-slate-500 font-bold uppercase">SUI</span></p>
 								</div>
 								<div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/20 shadow-sm">
 									<p className="text-[10px] text-emerald-400 font-bold uppercase mb-2 tracking-widest">Protocol Liquidity</p>
-									<p className="text-2xl font-black text-emerald-400">{totalLiquidity.toFixed(2)} <span className="text-xs text-emerald-600 font-bold uppercase">USDB</span></p>
+									<p className="text-2xl font-black text-emerald-400">{totalLiquidity.toFixed(4)} <span className="text-xs text-emerald-600 font-bold uppercase">USDB</span></p>
 								</div>
                                 <div className="p-6 bg-slate-800/30 rounded-2xl border border-slate-700/50 shadow-sm">
 									<p className="text-[10px] text-slate-500 font-bold uppercase mb-2 tracking-widest">Operation Fund</p>
