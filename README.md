@@ -1,5 +1,5 @@
 # 🚨 BUCK Emergency Fund Sharia (BEFS)
-**Ethical BUCK liquidity powered by a decentralized Waqf & Ujrah system on Sui.**
+**Ethical USDB liquidity powered by a decentralized Waqf & Ujrah system on Sui.**
 
 ---
 

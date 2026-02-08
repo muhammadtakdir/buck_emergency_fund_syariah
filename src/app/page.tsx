@@ -62,7 +62,7 @@ export default function Home() {
 					</div>
 					<h3 className="text-2xl font-bold mb-3 text-white">Collateral Pay (Rahn)</h3>
 					<p className="text-slate-400 text-sm leading-relaxed">
-						Out of cash? Settle your debt using your SUI collateral at current market prices. We ensure you get your remaining SUI back fairly.
+						Out of cash? Don't sell your SUI, settle your debt using SUI as collateral at current market prices. We ensure you get your remaining SUI back fairly.
 					</p>
 				</div>
 			</div>
@@ -77,7 +77,7 @@ export default function Home() {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-12">
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-blue-400">1. Keep your Upside</h4>
-						<p className="text-slate-400 text-sm">Don't sell your SUI at a low price just because you need cash. Lock it, get BUCK, and get your SUI back when the market rallies. You own the growth.</p>
+						<p className="text-slate-400 text-sm">Don't sell your SUI at a low price just because you need cash. Lock it, get USDB, and get your SUI back when the market rallies. You own the growth.</p>
 					</div>
 					<div className="space-y-4">
 						<h4 className="text-xl font-bold text-emerald-400">2. $0.70 Price Floor</h4>
