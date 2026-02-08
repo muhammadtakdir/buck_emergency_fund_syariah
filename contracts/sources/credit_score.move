@@ -95,4 +95,8 @@ module buck_emergency_fund::credit_score {
     public fun get_tier(score: &CreditScore): u8 {
         score.tier
     }
+
+    public fun get_user(score: &CreditScore): address {
+        score.user
+    }
 }

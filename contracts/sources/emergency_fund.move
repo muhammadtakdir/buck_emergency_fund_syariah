@@ -4,11 +4,14 @@ module buck_emergency_fund::emergency_fund {
     use sui::sui::SUI;
     use sui::clock::{Self, Clock};
     use sui::event;
-    use buck_emergency_fund::bucket_mock::{Self, BUCKET_MOCK as BUCK, SUSDB, Bottle, SavingPool};
+    use buck_emergency_fund::bucket_mock::{Self, BUCKET_MOCK as BUCK, SUSDB, Bottle, SavingPool, BuckTreasury};
     use buck_emergency_fund::credit_score::{Self, CreditScore};
 
     // Error codes
     const E_NOT_OWNER: u64 = 2;
+    const E_INSUFFICIENT_COLLATERAL: u64 = 3;
+    const E_DEBT_NOT_PAID: u64 = 1;
+    const E_INVALID_CREDIT_SCORE: u64 = 4;
     
     public struct EMERGENCY_FUND has drop {}
 
@@ -56,7 +59,13 @@ module buck_emergency_fund::emergency_fund {
         let amount = coin::value(&buck);
         let total_value = balance::value(&pool.susdb_balance) + balance::value(&pool.buck_reserve);
         let lp_supply = coin::total_supply(&pool.lp_buck_supply);
-        let shares = if (lp_supply == 0) { amount } else { (amount * lp_supply) / total_value };
+        
+        let shares = if (lp_supply == 0) { 
+            amount 
+        } else { 
+            (((amount as u128) * (lp_supply as u128) / (total_value as u128)) as u64)
+        };
+        
         let susdb_coin = bucket_mock::stake(saving_pool, buck, ctx);
         balance::join(&mut pool.susdb_balance, coin::into_balance(susdb_coin));
         coin::mint(&mut pool.lp_buck_supply, shares, ctx)
@@ -66,8 +75,10 @@ module buck_emergency_fund::emergency_fund {
         let shares = coin::value(&lp_coin);
         let lp_supply = coin::total_supply(&pool.lp_buck_supply);
         let total_v = balance::value(&pool.susdb_balance) + balance::value(&pool.buck_reserve);
-        let buck_amt = (shares * total_v) / lp_supply;
-        let sui_amt = (shares * balance::value(&pool.sui_reserve)) / lp_supply;
+        
+        let buck_amt = (((shares as u128) * (total_v as u128) / (lp_supply as u128)) as u64);
+        let sui_amt = (((shares as u128) * (balance::value(&pool.sui_reserve) as u128) / (lp_supply as u128)) as u64);
+        
         let susdb_to_unstake = if (balance::value(&pool.susdb_balance) >= buck_amt) { buck_amt } else { balance::value(&pool.susdb_balance) };
         let susdb_coin = coin::from_balance(balance::split(&mut pool.susdb_balance, susdb_to_unstake), ctx);
         let buck_output = bucket_mock::unstake(saving_pool, susdb_coin, ctx);
@@ -75,8 +86,14 @@ module buck_emergency_fund::emergency_fund {
         (buck_output, coin::take(&mut pool.sui_reserve, sui_amt, ctx))
     }
 
-    public fun borrow(pool: &mut LendingPool, saving_pool: &mut SavingPool, vault: &mut UserVault, _bottle: &Bottle, amount_to_borrow: u64, duration_months: u64, _score: &mut CreditScore, clock: &Clock, ctx: &mut TxContext): Coin<BUCK> {
+    public fun borrow(pool: &mut LendingPool, saving_pool: &mut SavingPool, vault: &mut UserVault, amount_to_borrow: u64, price: u64, duration_months: u64, clock: &Clock, ctx: &mut TxContext): Coin<BUCK> {
         assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
+        
+        // Check collateral ratio
+        let collateral_val = (((balance::value(&vault.collateral_balance) as u128) * (price as u128) / 1000000000) as u64);
+        let total_new_debt = vault.principal_debt + vault.fee_debt + amount_to_borrow + ((amount_to_borrow * pool.service_fee_bps) / 10000);
+        assert!((collateral_val * 100 / total_new_debt) >= pool.min_collateral_ratio, E_INSUFFICIENT_COLLATERAL);
+
         if (balance::value(&pool.buck_reserve) < amount_to_borrow) {
             let needed = amount_to_borrow - balance::value(&pool.buck_reserve);
             let susdb_coin = coin::from_balance(balance::split(&mut pool.susdb_balance, needed), ctx);
@@ -91,6 +108,9 @@ module buck_emergency_fund::emergency_fund {
     }
 
     public fun repay(pool: &mut LendingPool, vault: &mut UserVault, payment: Coin<BUCK>, score: &mut CreditScore, clock: &Clock, ctx: &mut TxContext) {
+        assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
+        assert!(credit_score::get_user(score) == tx_context::sender(ctx), E_INVALID_CREDIT_SCORE);
+
         let amount = coin::value(&payment);
         let mut payment_balance = coin::into_balance(payment);
         if (vault.fee_debt > 0) {
@@ -102,7 +122,13 @@ module buck_emergency_fund::emergency_fund {
             let waqf_buck = balance::split(&mut payment_balance, waqf_amt);
             let lp_sup = coin::total_supply(&pool.lp_buck_supply);
             let total_v = balance::value(&pool.susdb_balance) + balance::value(&pool.buck_reserve);
-            let waqf_shares = if (lp_sup == 0) { balance::value(&waqf_buck) } else { (balance::value(&waqf_buck) * lp_sup) / total_v };
+            
+            let waqf_shares = if (lp_sup == 0) { 
+                balance::value(&waqf_buck) 
+            } else { 
+                (((balance::value(&waqf_buck) as u128) * (lp_sup as u128) / (total_v as u128)) as u64) 
+            };
+            
             balance::join(&mut pool.buck_reserve, waqf_buck);
             balance::join(&mut pool.waqf_reserve, coin::into_balance(coin::mint(&mut pool.lp_buck_supply, waqf_shares, ctx)));
             vault.fee_debt = vault.fee_debt - fee_pay;
@@ -123,5 +149,26 @@ module buck_emergency_fund::emergency_fund {
     public fun claim_maintenance(_: &MaintenanceCap, pool: &mut LendingPool, ctx: &mut TxContext): Coin<BUCK> {
         let amount = balance::value(&pool.maintenance_balance);
         coin::from_balance(balance::split(&mut pool.maintenance_balance, amount), ctx)
+    }
+
+    public fun claim_jaminan(pool: &mut LendingPool, vault: &mut UserVault, ctx: &mut TxContext): Coin<SUI> {
+        assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
+        assert!(vault.principal_debt == 0 && vault.fee_debt == 0, E_DEBT_NOT_PAID);
+        let amt = balance::value(&vault.collateral_balance);
+        pool.total_sui_locked = pool.total_sui_locked - amt;
+        coin::from_balance(balance::split(&mut vault.collateral_balance, amt), ctx)
+    }
+
+    public fun repay_with_jaminan(pool: &mut LendingPool, vault: &mut UserVault, sui_repay_amount: u64, score: &mut CreditScore, price: u64, treasury: &mut BuckTreasury, clock: &Clock, ctx: &mut TxContext) {
+        assert!(vault.owner == tx_context::sender(ctx), E_NOT_OWNER);
+        assert!(credit_score::get_user(score) == tx_context::sender(ctx), E_INVALID_CREDIT_SCORE);
+
+        let total_debt = vault.principal_debt + vault.fee_debt;
+        let debt_in_sui = (((total_debt as u128) * 1000000000 / (price as u128)) as u64);
+        assert!(sui_repay_amount >= debt_in_sui, E_INSUFFICIENT_COLLATERAL);
+        let sui_payment = balance::split(&mut vault.collateral_balance, sui_repay_amount);
+        balance::join(&mut pool.sui_reserve, sui_payment);
+        let buck_minted = bucket_mock::mint_mock(treasury, total_debt, ctx);
+        repay(pool, vault, buck_minted, score, clock, ctx);
     }
 }

@@ -5,7 +5,9 @@ edition = "2024"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+Pyth = { git = "https://github.com/pyth-network/pyth-crosschain.git", subdir = "target_chains/sui/contracts/move", rev = "main" }
 
 [addresses]
 buck_emergency_fund = "0x0"
 bucket = "0x5497525287f7a77517c80526019a868f0a0c4f80"
+pyth = "0xabf837e98c26087cba0883c0a7a28326b1fa3c5e1e2c5abdb486f9e8f594c837"
