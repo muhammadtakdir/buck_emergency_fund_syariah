@@ -10,8 +10,8 @@ interface Props {
 }
 
 export function MusharakahPool({ onTransactionSuccess }: Props) {
-	const [amount, setAmount] = useState<string>('0.01');
-	const [withdrawAmount, setWithdrawAmount] = useState<string>('0.01');
+	const [amount, setAmount] = useState<string>('');
+	const [withdrawAmount, setWithdrawAmount] = useState<string>('');
 	const { mutate: signAndExecute } = useSignAndExecuteTransaction();
 	const account = useCurrentAccount();
 	const suiClient = useSuiClient();
@@ -28,8 +28,14 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 		coinType: LP_COIN_TYPE
 	}, { enabled: !!account });
 
-	const totalBuck = Number(buckBalanceData?.data.reduce((acc, coin) => acc + BigInt(coin.balance), 0n) || 0n) / 1_000_000_000;
-	const totalLP = Number(lpBalanceData?.data.reduce((acc, coin) => acc + BigInt(coin.balance), 0n) || 0n) / 1_000_000_000;
+	const totalBuckRaw = buckBalanceData?.data.reduce((acc, coin) => acc + BigInt(coin.balance), 0n) || 0n;
+	const totalLpRaw = lpBalanceData?.data.reduce((acc, coin) => acc + BigInt(coin.balance), 0n) || 0n;
+
+    const totalBuckNum = Number(totalBuckRaw) / 1_000_000_000;
+    const totalLpNum = Number(totalLpRaw) / 1_000_000_000;
+
+    const displayBuck = totalBuckNum > 0 && totalBuckNum < 0.01 ? totalBuckNum.toFixed(6) : totalBuckNum.toFixed(2);
+    const displayLp = totalLpNum > 0 && totalLpNum < 0.01 ? totalLpNum.toFixed(6) : totalLpNum.toFixed(2);
 
 	// FAUCET: Request free USDB
 	const handleFaucet = async () => {
@@ -50,7 +56,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 	};
 
 	const handleDeposit = async () => {
-		if (!account || !amount) return;
+		if (!account) return;
 		
 		const coins = await suiClient.getCoins({ owner: account.address, coinType: BUCK_COIN_TYPE });
 		if (coins.data.length === 0) return alert("You don't have any USDB. Please use the Faucet first!");
@@ -59,8 +65,13 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 		const coinIds = coins.data.map(c => c.coinObjectId);
 		if (coinIds.length > 1) tx.mergeCoins(tx.object(coinIds[0]), coinIds.slice(1).map(id => tx.object(id)));
 		
-		const depositAmount = BigInt(Math.floor(Number(amount) * 1_000_000_000));
-		const [usdbToSpend] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(depositAmount)]);
+        const depositAmountRaw = amount 
+            ? BigInt(Math.floor(Number(amount) * 1_000_000_000)) 
+            : totalBuckRaw;
+
+        if (depositAmountRaw <= 0n) return alert("Enter valid amount");
+
+		const [usdbToSpend] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(depositAmountRaw)]);
 
 		const [lpToken] = tx.moveCall({
 			target: `${PACKAGE_ID}::${MODULE_EMERGENCY_FUND}::provide_liquidity`,
@@ -77,13 +88,14 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                     if (onTransactionSuccess) onTransactionSuccess();
                 }, 1500); 
 				alert('Success: USDB deposited!'); 
+                setAmount('');
 			},
 			onError: (err: Error) => alert('Deposit Failed: ' + err.message)
 		});
 	};
 
 	const handleWithdraw = async () => {
-		if (!account || !withdrawAmount) return;
+		if (!account) return;
 		
 		const lpCoins = await suiClient.getCoins({ owner: account.address, coinType: LP_COIN_TYPE });
 		if (lpCoins.data.length === 0) return alert("No LP shares found!");
@@ -92,8 +104,13 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
 		const coinIds = lpCoins.data.map(c => c.coinObjectId);
 		if (coinIds.length > 1) tx.mergeCoins(tx.object(coinIds[0]), coinIds.slice(1).map(id => tx.object(id)));
 		
-		const burnAmount = BigInt(Math.floor(Number(withdrawAmount) * 1_000_000_000));
-		const [lpToBurn] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(burnAmount)]);
+        const burnAmountRaw = withdrawAmount 
+            ? BigInt(Math.floor(Number(withdrawAmount) * 1_000_000_000)) 
+            : totalLpRaw;
+
+        if (burnAmountRaw <= 0n) return alert("Enter valid amount");
+
+		const [lpToBurn] = tx.splitCoins(tx.object(coinIds[0]), [tx.pure.u64(burnAmountRaw)]);
 
 		const [usdbResult, suiResult] = tx.moveCall({
 			target: `${PACKAGE_ID}::${MODULE_EMERGENCY_FUND}::remove_liquidity`,
@@ -110,6 +127,7 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                     if (onTransactionSuccess) onTransactionSuccess();
                 }, 1500); 
                 alert('Success: Withdrawn!'); 
+                setWithdrawAmount('');
             },
 			onError: (err: Error) => alert('Withdraw Failed: ' + err.message)
 		});
@@ -130,20 +148,20 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                     <div>
                         <div className="flex justify-between mb-2 px-1">
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Amount</label>
-                            <span className="text-[10px] font-bold text-emerald-500/60">Balance: {totalBuck.toFixed(2)} USDB</span>
+                            <span className="text-[10px] font-bold text-emerald-500/60">Balance: {displayBuck} USDB</span>
                         </div>
                         <div className="relative">
                             <input 
                                 type="number" 
                                 value={amount} 
                                 onChange={(e) => setAmount(e.target.value)} 
-                                placeholder="0.00" 
+                                placeholder="Enter amount (Empty for ALL)" 
                                 className="w-full p-4 pr-16 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-emerald-500/50 outline-none font-bold text-white text-lg transition-all" 
                             />
                             <span className="absolute right-4 top-4 font-bold text-slate-600 text-sm">USDB</span>
                         </div>
                     </div>
-					<button onClick={handleDeposit} disabled={!amount || !account} className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95 disabled:opacity-30 text-xs uppercase tracking-widest mt-4">Confirm Supply</button>
+					<button onClick={handleDeposit} disabled={!account} className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95 disabled:opacity-30 text-xs uppercase tracking-widest mt-4">Confirm Supply</button>
 				</div>
 			</div>
 
@@ -157,20 +175,20 @@ export function MusharakahPool({ onTransactionSuccess }: Props) {
                     <div>
                         <div className="flex justify-between mb-2 px-1">
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Burn LP</label>
-                            <span className="text-[10px] font-bold text-blue-500/60">Available: {totalLP.toFixed(2)} lpUSDB</span>
+                            <span className="text-[10px] font-bold text-blue-500/60">Available: {displayLp} lpUSDB</span>
                         </div>
                         <div className="relative">
                             <input 
                                 type="number" 
                                 value={withdrawAmount} 
                                 onChange={(e) => setWithdrawAmount(e.target.value)} 
-                                placeholder="0.00" 
+                                placeholder="Enter amount (Empty for ALL)" 
                                 className="w-full p-4 pr-20 bg-slate-900/50 border border-slate-700/50 rounded-2xl focus:border-blue-500/50 outline-none font-bold text-white text-lg transition-all" 
                             />
                             <span className="absolute right-4 top-4 font-bold text-slate-600 text-sm uppercase">lpUSDB</span>
                         </div>
                     </div>
-					<button onClick={handleWithdraw} disabled={!withdrawAmount || !account || Number(withdrawAmount) > totalLP} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-30 text-xs uppercase tracking-widest mt-4">Withdraw All</button>
+					<button onClick={handleWithdraw} disabled={!account} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-30 text-xs uppercase tracking-widest mt-4">Withdraw All</button>
 				</div>
 			</div>
 		</div>
